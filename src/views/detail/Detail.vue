@@ -10,6 +10,8 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"/>
       <goods-list ref="recommend" :goods="recommends"/>
     </Scroll>
+    <detail-bottom-bar @addCart="addCart"></detail-bottom-bar>
+    <BackTop @click.native="backTopClick" v-show="isShowBackTop"></BackTop>
   </div>
 </template>
 
@@ -23,6 +25,8 @@
   import DetailParamInfo from "./childComponents/DetailParamInfo";
   import DetailCommentInfo from "./childComponents/DetailCommentInfo";
   import GoodsList from "../../components/content/goods/GoodsList";
+  import DetailBottomBar from "./childComponents/DetailBottomBar";
+  import BackTop from "../../components/content/backTop/BackTop";
   import {getDetail, GoodsInfo, Shop, GoodsParam, getRecommend} from "../../network/detail";
   import {debounce} from "../../common/utils";
 
@@ -42,7 +46,8 @@
         itemImgListener: null,
         themePos: [],
         getThemePos: null,
-        currentIndex: 0
+        currentIndex: 0,
+        isShowBackTop: false
       }
     },
     created() {
@@ -82,6 +87,9 @@
       this.$bus.$off('itemImgLoad', this.itemImgListener)
     },
     methods: {
+      backTopClick() {
+        this.$refs.scroll.scrollTo(0, 0, 1000)
+      },
       imageLoad() {
         this.$refs.scroll.refresh()
         this.getThemePos()
@@ -90,6 +98,7 @@
         this.$refs.scroll.scrollTo(0, -this.themePos[index], 100)
       },
       contentScroll(position) {
+        this.isShowBackTop = (-position.y) > 1000
         const positionY = -position.y
         let length = this.themePos.length
         for(let i = 0; i < length; i++){
@@ -99,6 +108,15 @@
             this.$refs.nav.currentIndex = this.currentIndex
           }
         }
+      },
+      addCart() {
+        const product = {}
+        product.image = this.topImages[0];
+        product.title = this.GoodsInfo.title;
+        product.desc = this.GoodsInfo.desc;
+        product.price = this.GoodsInfo.realPrice;
+        product.iid = this.iid;
+        this.$store.dispatch('addCart', product)
       }
 
     },
@@ -112,7 +130,10 @@
       DetailGoodsInfo,
       GoodsParam,
       DetailParamInfo,
-      DetailCommentInfo
+      DetailCommentInfo,
+      DetailBottomBar,
+      BackTop
+
     }
   }
 </script>
