@@ -12,6 +12,7 @@
     </Scroll>
     <detail-bottom-bar @addCart="addCart"></detail-bottom-bar>
     <BackTop @click.native="backTopClick" v-show="isShowBackTop"></BackTop>
+    <Toast :message="message" :show="show"></Toast>
   </div>
 </template>
 
@@ -27,6 +28,7 @@
   import GoodsList from "../../components/content/goods/GoodsList";
   import DetailBottomBar from "./childComponents/DetailBottomBar";
   import BackTop from "../../components/content/backTop/BackTop";
+  import Toast from "../../components/common/toast/Toast";
   import {getDetail, GoodsInfo, Shop, GoodsParam, getRecommend} from "../../network/detail";
   import {debounce} from "../../common/utils";
 
@@ -47,7 +49,9 @@
         themePos: [],
         getThemePos: null,
         currentIndex: 0,
-        isShowBackTop: false
+        isShowBackTop: false,
+        message: '',
+        show: false
       }
     },
     created() {
@@ -116,7 +120,9 @@
         product.desc = this.GoodsInfo.desc;
         product.price = this.GoodsInfo.realPrice;
         product.iid = this.iid;
-        this.$store.dispatch('addCart', product)
+        this.$store.dispatch('addCart', product).then(res => {
+          this.$toast.show(res, 1500)
+        })
       }
 
     },
@@ -132,8 +138,8 @@
       DetailParamInfo,
       DetailCommentInfo,
       DetailBottomBar,
-      BackTop
-
+      BackTop,
+      Toast
     }
   }
 </script>

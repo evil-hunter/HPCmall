@@ -11,13 +11,17 @@ const store = new Vuex.Store({
   getters,
   actions: {
     addCart(context, payload) {
-      let product = context.state.cartList.find(item => item.iid === payload.iid)
-      if(product) {
-        context.commit('addCount', product)
-      } else {
-        payload.count = 1
-        context.commit('addCart', payload)
-      }
+      return new Promise((resolve, reject) => {
+        let product = context.state.cartList.find(item => item.iid === payload.iid)
+        if(product) {
+          context.commit('addCount', product)
+          resolve("当前商品数量加一")
+        } else {
+          payload.count = 1
+          context.commit('addCart', payload)
+          resolve("成功添加到购物车")
+        }
+      })
     }
   },
   mutations: {

@@ -1,13 +1,16 @@
 <template>
     <div class="pay-bar">
         <div class="pay-content">
-            <check-button class="pay-button"/>
+            <check-button
+                    :is-check="isSelectAll"
+                    class="pay-button"
+                    @click.native="selectAll"/>
             <span>全选</span>
         </div>
         <div>
             合计:{{totalPrice}}
         </div>
-        <div class="calc-pay">
+        <div class="calc-pay" @click="calcClick">
             结算:{{checkLength}}
         </div>
     </div>
@@ -30,6 +33,24 @@
       },
       checkLength() {
         return this.$store.state.cartList.filter(item => item.checked).length
+      },
+      isSelectAll() {
+        if(this.$store.state.cartList.length === 0) return false
+        return !this.$store.state.cartList.find(item => !item.checked)
+      }
+    },
+    methods: {
+      selectAll() {
+        if(this.isSelectAll) {
+          this.$store.state.cartList.forEach(item => item.checked = false)
+        } else {
+          this.$store.state.cartList.forEach(item => item.checked = true)
+        }
+      },
+      calcClick() {
+        if(!this.isSelectAll) {
+          this.$toast.show('尚无选择商品', 1500)
+        }
       }
     }
   }

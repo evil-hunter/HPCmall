@@ -10,7 +10,7 @@
     props: {
       isCheck: {
         type: Boolean,
-        default: true
+        default: false
       }
     }
   }
